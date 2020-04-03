@@ -43,7 +43,8 @@ def resizeAndPad(img, size, padColor=0):
 
     return scaled_img
 
-img = cv2.imread('img2.jpg')
+img = cv2.imread('img3.jpeg')
+original_img = img.copy()
 
 edges = cv2.Canny(img,100,200)
 h, w = edges.shape[:2]
@@ -52,7 +53,8 @@ scaled_mask = resizeAndPad(edges, (h+2,w+2), 255)
 
 hsv_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 h, s, v = cv2.split(hsv_image)
-h.fill(165)
+h.fill(215)
+s.fill(65)
 hsv_image = cv2.merge([h, s, v])
 rgb_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2RGB)
 
@@ -60,9 +62,14 @@ rgb_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2RGB)
 old_edges = edges.copy()
 cv2.floodFill(edges, scaled_mask, (100, 100), 255)
 cv2.subtract(edges, old_edges, edges)
-wall = edges
+wall = cv2.bitwise_not(edges)
 
-a = cv2.bitwise_and(rgb_image, rgb_image, mask=wall)
+rgb_image = cv2.bitwise_and(rgb_image, rgb_image, mask=edges)
+
+marked_img = cv2.bitwise_and(img, img, mask=wall)
+
+final_img = cv2.bitwise_xor(rgb_image, marked_img)
+
 # pattern = np.zeros(img.shape[:],np.uint8)
 # pattern[:]=(58,205,142) 
 # lab_pattern = cv2.cvtColor(pattern, cv2.COLOR_RGB2LAB)
@@ -71,9 +78,9 @@ a = cv2.bitwise_and(rgb_image, rgb_image, mask=wall)
 # clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
 # cl = clahe.apply(l)
 
-plt.subplot(121),plt.imshow(img,cmap = 'gray')
+plt.subplot(121),plt.imshow(original_img)
 plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-plt.subplot(122),plt.imshow(a, cmap = 'gray')
+plt.subplot(122),plt.imshow(final_img, cmap = 'gray')
 plt.title('New Image'), plt.xticks([]), plt.yticks([])
 plt.show()
 
