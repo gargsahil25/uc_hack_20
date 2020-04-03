@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-def resizeAndPad(img, size, padColor=0):
+def resizeAndPad(img, size, pad_color=0):
 
     h, w = img.shape[:2]
     sh, sw = size
@@ -34,113 +34,79 @@ def resizeAndPad(img, size, padColor=0):
         pad_left, pad_right, pad_top, pad_bot = 0, 0, 0, 0
 
     # set pad color
-    if len(img.shape) is 3 and not isinstance(padColor, (list, tuple, np.ndarray)): # color image but only one color provided
-        padColor = [padColor]*3
+    if len(img.shape) is 3 and not isinstance(pad_color, (list, tuple, np.ndarray)): # color image but only one color provided
+        pad_color = [pad_color]*3
 
     # scale and pad
     scaled_img = cv2.resize(img, (new_w, new_h), interpolation=interp)
-    scaled_img = cv2.copyMakeBorder(scaled_img, pad_top, pad_bot, pad_left, pad_right, borderType=cv2.BORDER_CONSTANT, value=padColor)
+    scaled_img = cv2.copyMakeBorder(scaled_img, pad_top, pad_bot, pad_left, pad_right, borderType=cv2.BORDER_CONSTANT, value=pad_color)
 
     return scaled_img
 
-img = cv2.imread('img3.jpeg')
-original_img = img.copy()
 
-edges = cv2.Canny(img,100,200)
-h, w = edges.shape[:2]
-scaled_mask = resizeAndPad(edges, (h+2,w+2), 255)
-#original_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
-hsv_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-h, s, v = cv2.split(hsv_image)
-h.fill(215)
-s.fill(65)
-hsv_image = cv2.merge([h, s, v])
-rgb_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2RGB)
-
-#intensity = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2GRAY)
-old_edges = edges.copy()
-cv2.floodFill(edges, scaled_mask, (100, 100), 255)
-cv2.subtract(edges, old_edges, edges)
-wall = cv2.bitwise_not(edges)
-
-rgb_image = cv2.bitwise_and(rgb_image, rgb_image, mask=edges)
-
-marked_img = cv2.bitwise_and(img, img, mask=wall)
-
-final_img = cv2.bitwise_xor(rgb_image, marked_img)
-
-# pattern = np.zeros(img.shape[:],np.uint8)
-# pattern[:]=(58,205,142) 
-# lab_pattern = cv2.cvtColor(pattern, cv2.COLOR_RGB2LAB)
-# lp, ap, bp = cv2.split(lab_pattern)
-
-# clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
-# cl = clahe.apply(l)
-
-plt.subplot(121),plt.imshow(original_img)
-plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-plt.subplot(122),plt.imshow(final_img, cmap = 'gray')
-plt.title('New Image'), plt.xticks([]), plt.yticks([])
-plt.show()
+def getOutlineImg(img):
+    return cv2.Canny(img,100,200)  # todo: optimise 
 
 
-
-# cap = cv2.VideoCapture(0)
-
-# while(1):
-
-#     # Take each frame
-#     _, frame = cap.read()
-
-#     # Convert BGR to HSV
-#     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
-#     # define range of blue color in HSV
-#     lower_blue = np.array([110,50,50])
-#     upper_blue = np.array([130,255,255])
-
-#     # Threshold the HSV image to get only blue colors
-#     mask = cv2.inRange(hsv, lower_blue, upper_blue)
-
-#     # Bitwise-AND mask and original image
-#     res = cv2.bitwise_and(frame,frame, mask= mask)
-
-#     cv2.imshow('frame',frame)
-#     cv2.imshow('mask',mask)
-#     cv2.imshow('res',res)
-#     k = cv2.waitKey(5) & 0xFF
-#     if k == 27:
-#         break
-
-# cv2.destroyAllWindows()
-
-# IplImage image = cvLoadImage("img2.jpg");
-# CvSize cvSize = cvGetSize(image);
+def getColoredImage(img, new_color):
+    color = np.uint8([[new_color]])
+    hsv_color = cv2.cvtColor(color, cv2.COLOR_RGB2HSV)
+    hsv_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    h, s, v = cv2.split(hsv_image)
+    h.fill(hsv_color[0][0][0])
+    s.fill(hsv_color[0][0][1])
+    new_hsv_image = cv2.merge([h, s, v])
+    new_rgb_image = cv2.cvtColor(new_hsv_image, cv2.COLOR_HSV2RGB)
+    return new_rgb_image
 
 
-# IplImage hsvImage = cvCreateImage(cvSize, image.depth(),image.nChannels());
+def selectWall(outline_img, position):
+    h, w = outline_img.shape[:2]
+    wall = outline_img.copy()
+    scaled_mask = resizeAndPad(outline_img, (h+2,w+2), 255)
+    cv2.floodFill(wall, scaled_mask, position, 255)  # todo: optimise
+    cv2.subtract(wall, outline_img, wall) 
+    return wall
 
-# IplImage hChannel = cvCreateImage(cvSize, image.depth(), 1); 
-#         IplImage  sChannel = cvCreateImage(cvSize, image.depth(), 1); 
-#         IplImage  vChannel = cvCreateImage(cvSize, image.depth(), 1);
-# cvSplit(hsvImage, hChannel, sChannel, vChannel, null);
+
+def mergeImages(img, colored_image, wall):
+    colored_image = cv2.bitwise_and(colored_image, colored_image, mask=wall)
+    marked_img = cv2.bitwise_and(img, img, mask=cv2.bitwise_not(wall))
+    final_img = cv2.bitwise_xor(colored_image, marked_img)
+    return final_img
 
 
-# IplImage cvInRange = cvCreateImage(cvSize, image.depth(), 1);
-# CvScalar source=new CvScalar(72/2,0.07*255,66,0); //source color to replace
-# CvScalar from=getScaler(source,false);
-# CvScalar to=getScaler(source, true);
+def showImages(original_img, colored_image, selected_wall, final_img):
+    plt.subplot(221),plt.imshow(original_img)
+    plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+    plt.subplot(222),plt.imshow(colored_image, cmap = 'gray')
+    plt.title('Colored Image'), plt.xticks([]), plt.yticks([])
+    plt.subplot(223),plt.imshow(selected_wall, cmap = 'gray')
+    plt.title('Selected Wall'), plt.xticks([]), plt.yticks([])
+    plt.subplot(224),plt.imshow(final_img, cmap = 'gray')
+    plt.title('Final Image'), plt.xticks([]), plt.yticks([])
+    plt.show()
 
-# cvInRangeS(hsvImage, from , to, cvInRange);
 
-# IplImage dest = cvCreateImage(cvSize, image.depth(), image.nChannels());
+def changeColor(image_name, position, new_color):
+    img = cv2.imread('images/' + image_name)
+    original_img = img.copy()
 
-# IplImage temp = cvCreateImage(cvSize, IPL_DEPTH_8U, 2);
-# cvMerge(hChannel, sChannel, null, null, temp);
+    colored_image = getColoredImage(img, new_color)
 
-# cvSet(temp, new CvScalar(45,255,0,0), cvInRange);// destination hue and sat
-# cvSplit(temp, hChannel, sChannel, null, null);
-# cvMerge(hChannel, sChannel, vChannel, null, dest);
-# cvCvtColor(dest, dest, CV_HSV2BGR);
-# cvSaveImage("output.png", dest);
+    outline_img = getOutlineImg(img)
+    original_outline_img = outline_img.copy()
+
+    selected_wall = selectWall(outline_img, position)
+    
+    final_img = mergeImages(img, colored_image, selected_wall)
+
+    # pattern = np.zeros(img.shape[:],np.uint8)
+    # pattern[:]=(58,205,142) 
+    # lab_pattern = cv2.cvtColor(pattern, cv2.COLOR_RGB2LAB)
+    # lp, ap, bp = cv2.split(lab_pattern)
+
+    showImages(original_img, colored_image, selected_wall, final_img)
+    
+
+changeColor('img2.jpg', (100, 100), [70, 199, 140])
