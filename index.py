@@ -1,6 +1,12 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+from datetime import datetime
+
+def readImage(img_name):
+    img = cv2.imread('images/' + img_name)
+    return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
 
 def resizeAndPad(img, size, pad_color=0):
 
@@ -45,18 +51,18 @@ def resizeAndPad(img, size, pad_color=0):
 
 
 def getOutlineImg(img):
-    return cv2.Canny(img,100,200)  # todo: optimise 
+    return cv2.Canny(img,100,200)  # todo: can be optimised later
 
 
 def getColoredImage(img, new_color):
     color = np.uint8([[new_color]])
     hsv_color = cv2.cvtColor(color, cv2.COLOR_RGB2HSV)
-    hsv_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    hsv_image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv_image)
-    h.fill(hsv_color[0][0][0])
+    h.fill(hsv_color[0][0][0])  # todo: optimise to handle black/white walls
     s.fill(hsv_color[0][0][1])
     new_hsv_image = cv2.merge([h, s, v])
-    new_rgb_image = cv2.cvtColor(new_hsv_image, cv2.COLOR_HSV2RGB)
+    new_rgb_image = cv2.cvtColor(new_hsv_image, cv2.COLOR_HSV2BGR)
     return new_rgb_image
 
 
@@ -64,7 +70,7 @@ def selectWall(outline_img, position):
     h, w = outline_img.shape[:2]
     wall = outline_img.copy()
     scaled_mask = resizeAndPad(outline_img, (h+2,w+2), 255)
-    cv2.floodFill(wall, scaled_mask, position, 255)  # todo: optimise
+    cv2.floodFill(wall, scaled_mask, position, 255)   # todo: can be optimised later
     cv2.subtract(wall, outline_img, wall) 
     return wall
 
@@ -76,8 +82,12 @@ def mergeImages(img, colored_image, wall):
     return final_img
 
 
+def saveImage(img_name, img):
+    cv2.imwrite( "./images/edited-" + img_name, img)
+
+
 def showImages(original_img, colored_image, selected_wall, final_img):
-    plt.subplot(221),plt.imshow(original_img)
+    plt.subplot(221),plt.imshow(original_img, cmap = 'gray')
     plt.title('Original Image'), plt.xticks([]), plt.yticks([])
     plt.subplot(222),plt.imshow(colored_image, cmap = 'gray')
     plt.title('Colored Image'), plt.xticks([]), plt.yticks([])
@@ -89,7 +99,8 @@ def showImages(original_img, colored_image, selected_wall, final_img):
 
 
 def changeColor(image_name, position, new_color):
-    img = cv2.imread('images/' + image_name)
+    start = datetime.timestamp(datetime.now())
+    img = readImage(image_name)
     original_img = img.copy()
 
     colored_image = getColoredImage(img, new_color)
@@ -105,8 +116,18 @@ def changeColor(image_name, position, new_color):
     # pattern[:]=(58,205,142) 
     # lab_pattern = cv2.cvtColor(pattern, cv2.COLOR_RGB2LAB)
     # lp, ap, bp = cv2.split(lab_pattern)
-
+    
+    end = start = datetime.timestamp(datetime.now())
+    print (end-start)
+    saveImage(image_name, final_img)
     showImages(original_img, colored_image, selected_wall, final_img)
     
 
-changeColor('img2.jpg', (100, 100), [70, 199, 140])
+changeColor('img3.jpeg', (100, 100), [70, 199, 140])
+
+# original img color
+# pattern
+# save image + integration
+# ppt
+# different images & actual color
+# video
