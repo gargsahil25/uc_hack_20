@@ -55,14 +55,21 @@ def getOutlineImg(img):
 
 
 def getColoredImage(img, new_color):
+    pattern = cv2.imread('pattern2.jpg')
+    hsv_pattern = cv2.cvtColor(pattern, cv2.COLOR_BGR2HSV)
+    hp, sp, vp = cv2.split(hsv_pattern)
+
     color = np.uint8([[new_color]])
     hsv_color = cv2.cvtColor(color, cv2.COLOR_RGB2HSV)
-    hsv_image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    hsv_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
     h, s, v = cv2.split(hsv_image)
     h.fill(hsv_color[0][0][0])  # todo: optimise to handle black/white walls
     s.fill(hsv_color[0][0][1])
+
+    # cv2.add(vp, v, vp)
+    # new_hsv_image = cv2.merge([hp, sp, v])
     new_hsv_image = cv2.merge([h, s, v])
-    new_rgb_image = cv2.cvtColor(new_hsv_image, cv2.COLOR_HSV2BGR)
+    new_rgb_image = cv2.cvtColor(new_hsv_image, cv2.COLOR_HSV2RGB)
     return new_rgb_image
 
 
@@ -111,11 +118,6 @@ def changeColor(image_name, position, new_color):
     selected_wall = selectWall(outline_img, position)
     
     final_img = mergeImages(img, colored_image, selected_wall)
-
-    # pattern = np.zeros(img.shape[:],np.uint8)
-    # pattern[:]=(58,205,142) 
-    # lab_pattern = cv2.cvtColor(pattern, cv2.COLOR_RGB2LAB)
-    # lp, ap, bp = cv2.split(lab_pattern)
     
     end = start = datetime.timestamp(datetime.now())
     print (end-start)
@@ -123,9 +125,8 @@ def changeColor(image_name, position, new_color):
     showImages(original_img, colored_image, selected_wall, final_img)
     
 
-changeColor('img3.jpeg', (100, 100), [70, 199, 140])
+changeColor('img33.jpg', (300, 100), [70, 199, 140])
 
-# original img color
 # pattern
 # save image + integration
 # ppt
