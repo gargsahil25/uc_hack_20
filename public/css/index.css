@@ -8,6 +8,11 @@
     width: 50px;
     display: inline-block;
     margin: 5px;
+    border: 1px solid white;
+}
+
+.sample:hover {
+    border: 1px solid black;
 }
 
 .main {
