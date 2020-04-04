@@ -128,7 +128,7 @@ def changeColor(image_name, position, new_color, pattern_image):
     end = start = datetime.timestamp(datetime.now())
     print (end-start)
     saveImage(image_name, final_img)
-    showImages(original_img, colored_image, selected_wall, final_img)
+    # showImages(original_img, colored_image, selected_wall, final_img)
     
 
 

@@ -70,6 +70,8 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             return (False, "Content-Type header doesn't contain boundary")
         boundary = content_type.split("=")[1].encode()
         remainbytes = int(self.headers['content-length'])
+        # post_data = self.rfile.read(remainbytes)
+        # print(post_data)
         line = self.rfile.readline()
         remainbytes -= len(line)
         if not boundary in line:
@@ -100,9 +102,16 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 preline = preline[0:-1]
                 if preline.endswith(b'\r'):
                     preline = preline[0:-1]
+                self.rfile.readline() # to exclude few encoded bytes
+                self.rfile.readline() # to exclude few encoded bytes
+                dimension = self.rfile.readline().decode()
+                dimension = dimension.replace("\r\n","")
+                dim_arr = dimension.split(',')
+                dim_arr = list(map(int, dim_arr))
+                print(dim_arr)
                 out.write(preline)
                 out.close()
-                img_proc.changeColor(absFn, (300, 100), [70, 199, 140])
+                img_proc.changeColor(absFn, (300, 100), dim_arr, None)
                 return (True, "File '%s' upload success!" % fn)
             else:
                 out.write(preline)
