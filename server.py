@@ -82,7 +82,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         absFn = fn[0]
         if not fn:
             return (False, "Can't find out file name...")
-        path = self.translate_path(self.path) + "/images/"
+        path = self.translate_path(self.path) + "/public/images/"
         fn = os.path.join(path, fn[0])
         line = self.rfile.readline()
         remainbytes -= len(line)
@@ -131,9 +131,9 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         """
 
         if self.path.__eq__('/'):
-            self.path = self.path + "images/"
+            self.path = self.path + "public/images/"
         else:
-            self.path = 'images' + self.path
+            self.path = 'public/images' + self.path
         path = self.translate_path(self.path)
         f = None
         if os.path.isdir(path):
