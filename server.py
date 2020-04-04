@@ -130,7 +130,10 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         """
 
-        if self.path.__eq__('/'):
+        if self.path.__eq__('/') or self.path.startswith('/?'):
+            if self.path.startswith('/?'):
+                param_map_arr = self.path.replace('/?','')
+                param_map = param_map_arr.split('&')
             self.path = './public/images/' + self.path
             path = self.translate_path(self.path)
             return self.list_directory(path)
