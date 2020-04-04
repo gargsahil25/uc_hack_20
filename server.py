@@ -134,6 +134,12 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             if self.path.startswith('/?'):
                 param_map_arr = self.path.replace('/?','')
                 param_map = param_map_arr.split('&')
+                dict = {}
+                for elem in param_map:
+                    item = elem.split('=')
+                    dict[item[0]] = item[1]
+                print(dict)
+                img_proc.changeColor(dict['img'], (100,100), dict['color'].split(','), dict['pattern'])
             self.path = './public/images/' + self.path
             path = self.translate_path(self.path)
             return self.list_directory(path)
