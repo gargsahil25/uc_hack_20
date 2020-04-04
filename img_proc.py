@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from datetime import datetime
 
 def readImage(img_name):
-    img = cv2.imread('images/' + img_name)
+    img = cv2.imread('./public/images/' + img_name)
     return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 
@@ -51,7 +51,11 @@ def resizeAndPad(img, size, pad_color=0):
 
 
 def getOutlineImg(img):
-    return cv2.Canny(img,50,200)  # todo: can be optimised later
+    # img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    # img = clahe.apply(img)
+    # img = cv2.equalizeHist(img)
+    return cv2.Canny(img,100,200)  # todo: can be optimised later
 
 
 def getColoredImage(img, new_color, pattern_image):
@@ -68,7 +72,7 @@ def getColoredImage(img, new_color, pattern_image):
         new_hsv_image = cv2.merge([h, s, v])
 
     else:
-        pattern = cv2.imread('patterns/' + pattern_image)
+        pattern = cv2.imread('./public/patterns/' + pattern_image)
         hsv_pattern = cv2.cvtColor(pattern, cv2.COLOR_BGR2HSV)
         hp, sp, vp = cv2.split(hsv_pattern)
         # cv2.add(vp, v, vp)
@@ -96,7 +100,7 @@ def mergeImages(img, colored_image, wall):
 
 def saveImage(img_name, img):
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    cv2.imwrite( "./images/edited-" + img_name, img)
+    cv2.imwrite( "./public/edited/" + img_name, img)
 
 
 def showImages(original_img, colored_image, selected_wall, final_img):
@@ -132,6 +136,11 @@ def changeColor(image_name, position, new_color, pattern_image):
     
 
 
-# changeColor('img3.jpg', (300, 100), [200, 199, 140], None)
+# changeColor('img5.jpeg', (300, 100), [105, 149, 173], None)
 # changeColor('img3.jpg', (300, 100), None, 'pattern2.jpg')
+
+# PINK: 220, 180, 170
+# Purple: 125, 119, 131
+# green: 135, 168, 161
+# blue: 150, 182, 207
 
