@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from datetime import datetime
 
 def readImage(img_name):
-    img = cv2.imread('images/' + img_name)
+    img = cv2.imread('images/'+img_name)
     return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 
@@ -122,10 +122,10 @@ def changeColor(image_name, position, new_color):
     end = start = datetime.timestamp(datetime.now())
     print (end-start)
     saveImage(image_name, final_img)
-    showImages(original_img, colored_image, selected_wall, final_img)
+    # showImages(original_img, colored_image, selected_wall, final_img)
     
 
-changeColor('img33.jpg', (300, 100), [70, 199, 140])
+# changeColor('img33.jpg', (300, 100), [70, 199, 140])
 
 # pattern
 # save image + integration

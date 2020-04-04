@@ -22,6 +22,7 @@ import cgi
 import shutil
 import mimetypes
 import re
+import img_proc
 from io import BytesIO
  
  
@@ -58,32 +59,10 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         """Serve a POST request."""
         r, info = self.deal_post_data()
         print((r, info, "by: ", self.client_address))
-        # f = BytesIO()
-        # f.write(b'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        # f.write(b"<html>\n<title>Upload Result Page</title>\n")
-        # f.write(b"<body>\n<h2>Upload Result Page</h2>\n")
-        # f.write(b"<hr>\n")
-        # if r:
-        #     f.write(b"<strong>Success:</strong>")
-        # else:
-        #     f.write(b"<strong>Failed:</strong>")
-        # f.write(info.encode())
-        # f.write(("<br><a href=\"%s\">back</a>" % self.headers['referer']).encode())
-        # f.write(b"<hr><small>Powerd By: bones7456, check new version at ")
-        # f.write(b"<a href=\"http://li2z.cn/?s=SimpleHTTPServerWithUpload\">")
-        # f.write(b"here</a>.</small></body>\n</html>\n")
-        # length = f.tell()
-        # f.seek(0)
         self.send_response(301)
         self.send_header('Location', self.headers['referer'])
         self.end_headers()
-        # self.send_response(200)
-        # self.send_header("Content-type", "text/html")
-        # self.send_header("Content-Length", str(length))
-        # self.end_headers()
-        # if f:
-        #     self.copyfile(f, self.wfile)
-        #     f.close()
+
         
     def deal_post_data(self):
         content_type = self.headers['content-type']
@@ -98,9 +77,10 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         line = self.rfile.readline()
         remainbytes -= len(line)
         fn = re.findall(r'Content-Disposition.*name="file"; filename="(.*)"', line.decode())
+        absFn = fn[0]
         if not fn:
             return (False, "Can't find out file name...")
-        path = self.translate_path(self.path)
+        path = self.translate_path(self.path) + "/images/"
         fn = os.path.join(path, fn[0])
         line = self.rfile.readline()
         remainbytes -= len(line)
@@ -122,6 +102,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     preline = preline[0:-1]
                 out.write(preline)
                 out.close()
+                img_proc.changeColor(absFn, (300, 100), [70, 199, 140])
                 return (True, "File '%s' upload success!" % fn)
             else:
                 out.write(preline)
@@ -139,6 +120,11 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         None, in which case the caller has nothing further to do.
 
         """
+
+        if self.path.__eq__('/'):
+            self.path = self.path + "images/"
+        else:
+            self.path = 'images' + self.path
         path = self.translate_path(self.path)
         f = None
         if os.path.isdir(path):
@@ -189,11 +175,10 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         f = BytesIO()
         displaypath = cgi.escape(urllib.parse.unquote(self.path))
         f.write(b'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write(("<html>\n<title>Directory listing for %s</title>\n" % displaypath).encode())
-        f.write(("<body>\n<h2>Directory listing for %s</h2>\n" % displaypath).encode())
-        f.write(b"<hr>\n")
+        f.write(("<html>\n<title>LN2</title>\n<body>\n").encode())
         f.write(b"<form ENCTYPE=\"multipart/form-data\" method=\"post\">")
         f.write(b"<input name=\"file\" type=\"file\"/>")
+        f.write(b"<input name=\"color\" type=\"text\"/>")
         f.write(b"<input type=\"submit\" value=\"upload\"/></form>\n")
         f.write(b"<hr>\n<ul>\n")
         for name in list:
