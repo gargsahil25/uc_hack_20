@@ -16,27 +16,27 @@
 }
 
 .main {
-    height: 400px;
+    width: 700px;
     display: inline-block;
     margin: 5px;
 }
 
 .c1 {
-    background-color: rgb(220, 180, 170);
+    background-color: rgb(220,180,170);
 }
 
 .c2 {
-    background-color: rgb(125, 119, 131);;
+    background-color: rgb(220,99,78);;
 }
 
 .c3 {
-    background-color: rgb(135, 168, 161);;
+    background-color: rgb(135,168,161);;
 }
 
 .c4 {
-    background-color: rgb(150, 182, 207);;
+    background-color: rgb(220,180,170);;
 }
 
 .c5 {
-    background-color: rgb(220, 180, 170);;
+    background-color: rgb(107,148,109);;
 }
