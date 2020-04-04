@@ -131,13 +131,13 @@ def changeColor(image_name, position, new_color, pattern_image):
     
     end = start = datetime.timestamp(datetime.now())
     print (end-start)
-    # saveImage(image_name, final_img)
-    showImages(original_img, colored_image, selected_wall, final_img)
+    saveImage(image_name, final_img)
+    # showImages(original_img, colored_image, selected_wall, final_img)
     
 
 
 # changeColor('img3.jpg', (300, 100), [105, 149, 173], None)
-changeColor('img3.jpg', (300, 100), None, 'pattern3.jpg')
+# changeColor('img3.jpg', (300, 100), None, 'pattern3.jpg')
 
 # PINK: 220, 180, 170
 # Purple: 125, 119, 131
