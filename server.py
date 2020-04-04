@@ -141,11 +141,11 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     dict[item[0]] = item[1]
                 img = dict['img']
                 if 'color' in dict and 'pattern'in dict:
-                    img_proc.changeColor(dict['img'], (100,100), dict['color'].split(','), dict['pattern'])
+                    img_proc.changeColor(dict['img'], (300,100), dict['color'].split(','), dict['pattern'])
                 elif 'color' in dict:
-                    img_proc.changeColor(dict['img'], (100,100), dict['color'].split(','), None)
+                    img_proc.changeColor(dict['img'], (300,100), dict['color'].split(','), None)
                 elif 'pattern'in dict:
-                    img_proc.changeColor(dict['img'], (100,100), None, dict['pattern'])
+                    img_proc.changeColor(dict['img'], (300,100), None, dict['pattern'])
             self.path = './public/images/' + self.path
             path = self.translate_path(self.path)
             return self.list_directory(path, img)

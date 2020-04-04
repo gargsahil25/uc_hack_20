@@ -55,7 +55,7 @@ def getOutlineImg(img):
     # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
     # img = clahe.apply(img)
     # img = cv2.equalizeHist(img)
-    return cv2.Canny(img,100,200)  # todo: can be optimised later
+    return cv2.Canny(img,50,200)  # todo: can be optimised later
 
 
 def getColoredImage(img, new_color, pattern_image):
