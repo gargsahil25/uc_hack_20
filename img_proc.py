@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from datetime import datetime
 
 def readImage(img_name):
-    img = cv2.imread('images/'+img_name)
+    img = cv2.imread('images/' + img_name)
     return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 
@@ -54,21 +54,26 @@ def getOutlineImg(img):
     return cv2.Canny(img,100,200)  # todo: can be optimised later
 
 
-def getColoredImage(img, new_color):
-    pattern = cv2.imread('pattern2.jpg')
-    hsv_pattern = cv2.cvtColor(pattern, cv2.COLOR_BGR2HSV)
-    hp, sp, vp = cv2.split(hsv_pattern)
+def getColoredImage(img, new_color, pattern_image):
 
-    color = np.uint8([[new_color]])
-    hsv_color = cv2.cvtColor(color, cv2.COLOR_RGB2HSV)
     hsv_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
     h, s, v = cv2.split(hsv_image)
-    h.fill(hsv_color[0][0][0])  # todo: optimise to handle black/white walls
-    s.fill(hsv_color[0][0][1])
+    new_hsv_image = hsv_image
 
-    # cv2.add(vp, v, vp)
-    # new_hsv_image = cv2.merge([hp, sp, v])
-    new_hsv_image = cv2.merge([h, s, v])
+    if new_color is not None:
+        color = np.uint8([[new_color]])
+        hsv_color = cv2.cvtColor(color, cv2.COLOR_RGB2HSV)
+        h.fill(hsv_color[0][0][0])  # todo: optimise to handle black/white walls
+        s.fill(hsv_color[0][0][1])
+        new_hsv_image = cv2.merge([h, s, v])
+
+    else:
+        pattern = cv2.imread('patterns/' + pattern_image)
+        hsv_pattern = cv2.cvtColor(pattern, cv2.COLOR_BGR2HSV)
+        hp, sp, vp = cv2.split(hsv_pattern)
+        # cv2.add(vp, v, vp)
+        new_hsv_image = cv2.merge([hp, sp, v])
+
     new_rgb_image = cv2.cvtColor(new_hsv_image, cv2.COLOR_HSV2RGB)
     return new_rgb_image
 
@@ -90,6 +95,7 @@ def mergeImages(img, colored_image, wall):
 
 
 def saveImage(img_name, img):
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     cv2.imwrite( "./images/edited-" + img_name, img)
 
 
@@ -105,12 +111,12 @@ def showImages(original_img, colored_image, selected_wall, final_img):
     plt.show()
 
 
-def changeColor(image_name, position, new_color):
+def changeColor(image_name, position, new_color, pattern_image):
     start = datetime.timestamp(datetime.now())
     img = readImage(image_name)
     original_img = img.copy()
 
-    colored_image = getColoredImage(img, new_color)
+    colored_image = getColoredImage(img, new_color, pattern_image)
 
     outline_img = getOutlineImg(img)
     original_outline_img = outline_img.copy()
@@ -122,13 +128,10 @@ def changeColor(image_name, position, new_color):
     end = start = datetime.timestamp(datetime.now())
     print (end-start)
     saveImage(image_name, final_img)
-    # showImages(original_img, colored_image, selected_wall, final_img)
+    showImages(original_img, colored_image, selected_wall, final_img)
     
 
-# changeColor('img33.jpg', (300, 100), [70, 199, 140])
 
-# pattern
-# save image + integration
-# ppt
-# different images & actual color
-# video
+# changeColor('img33.jpg', (300, 100), [200, 199, 140], None)
+# changeColor('img33.jpg', (300, 100), None, 'pattern2.jpg')
+
