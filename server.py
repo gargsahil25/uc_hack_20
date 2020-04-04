@@ -131,6 +131,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         """
 
         if self.path.__eq__('/') or self.path.startswith('/?'):
+            img = 'img2.jpg'
             if self.path.startswith('/?'):
                 param_map_arr = self.path.replace('/?','')
                 param_map = param_map_arr.split('&')
@@ -138,7 +139,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 for elem in param_map:
                     item = elem.split('=')
                     dict[item[0]] = item[1]
-                print(dict)
+                img = dict['img']
                 if 'color' in dict and 'pattern'in dict:
                     img_proc.changeColor(dict['img'], (100,100), dict['color'].split(','), dict['pattern'])
                 elif 'color' in dict:
@@ -147,7 +148,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     img_proc.changeColor(dict['img'], (100,100), None, dict['pattern'])
             self.path = './public/images/' + self.path
             path = self.translate_path(self.path)
-            return self.list_directory(path)
+            return self.list_directory(path, img)
         
         self.path = './public/' + self.path
         path = self.translate_path(self.path)
@@ -170,7 +171,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         return f
  
-    def list_directory(self, path):
+    def list_directory(self, path, img):
         """Helper to produce a directory listing (absent index.html).
 
         Return value is either a file object, or None (indicating an
@@ -225,7 +226,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         f.write(b"<span><img class='sample' src='/patterns/pattern.jpg' data-name='pattern.jpg' data-key='pattern'/></span>")
         f.write(b"</div>")
         # f.write(b"<input type=\"submit\" value=\"Modify\" class='inline'/></form>\n")
-        f.write(b"<div><img class='main' src='/images/img2.jpg'/><img class='main' src='/edited/img2.jpg'/></div>")
+        f.write(("<div><img class='main' src='/images/%s'/><img class='main' src='/edited/%s'/></div>" % (img, img)).encode())
         f.write(b"</body>\n</html>\n")
         length = f.tell()
         f.seek(0)
