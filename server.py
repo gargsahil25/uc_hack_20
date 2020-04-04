@@ -131,25 +131,14 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         """
 
         if self.path.__eq__('/'):
-            self.path = self.path + "images/"
-        else:
-            self.path = 'images' + self.path
+            self.path = './public/images/' + self.path
+            path = self.translate_path(self.path)
+            return self.list_directory(path)
+        
+        self.path = './public/' + self.path
         path = self.translate_path(self.path)
+
         f = None
-        if os.path.isdir(path):
-            if not self.path.endswith('/'):
-                # redirect browser - doing basically what apache does
-                self.send_response(301)
-                self.send_header("Location", self.path + "/")
-                self.end_headers()
-                return None
-            for index in "index.html", "index.htm":
-                index = os.path.join(path, index)
-                if os.path.exists(index):
-                    path = index
-                    break
-            else:
-                return self.list_directory(path)
         ctype = self.guess_type(path)
         try:
             # Always read in binary mode. Opening files in text mode may cause
@@ -184,12 +173,12 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         f = BytesIO()
         displaypath = cgi.escape(urllib.parse.unquote(self.path))
         f.write(b'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write(("<html>\n<title>LN2</title>\n<body>\n").encode())
+        f.write(("<html>\n<title>LN2</title><link rel='stylesheet' href='/css/index.css'/><script type='text/javascript' src='/js/index.js'></script>\n<body>\n").encode())
         f.write(b"<form ENCTYPE=\"multipart/form-data\" method=\"post\">")
-        f.write(b"<input name=\"file\" type=\"file\"/>")
-        f.write(b"<input name=\"color\" type=\"text\"/>")
-        f.write(b"<input type=\"submit\" value=\"upload\"/></form>\n")
-        f.write(b"<hr>\n<ul>\n")
+        # f.write(b"<input name=\"file\" type=\"file\"/>")
+        f.write(b"<h1>LN2 - What's cooler than Liquid Nitrogen</h1><hr>")
+        
+        f.write(b"<div>\n")
         for name in list:
             fullname = os.path.join(path, name)
             displayname = linkname = name
@@ -200,9 +189,25 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             if os.path.islink(fullname):
                 displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
-            f.write(('<li><a href="%s">%s</a>\n'
-                    % (urllib.parse.quote(linkname), cgi.escape(displayname))).encode())
-        f.write(b"</ul>\n<hr>\n</body>\n</html>\n")
+            f.write(('<span><img class="sample" src="/images/%s"/></span>'
+                    % (urllib.parse.quote(linkname))).encode())
+        f.write(b"</div>")
+        f.write(b"<div>")
+        f.write(b"<span class='sample c1'></span>")
+        f.write(b"<span class='sample c2'></span>")
+        f.write(b"<span class='sample c3'></span>")
+        f.write(b"<span class='sample c4'></span>")
+        f.write(b"<span class='sample c5'></span>")
+        f.write(b"</div>")
+        f.write(b"<div>")
+        f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
+        f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
+        f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
+        f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
+        f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
+        f.write(b"</div>")
+        f.write(b"<input type=\"submit\" value=\"upload\"/></form>\n")
+        f.write(b"</body>\n</html>\n")
         length = f.tell()
         f.seek(0)
         self.send_response(200)
