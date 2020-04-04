@@ -1,0 +1,37 @@
+.inline {
+    display: inline-block;
+    margin: 20px;
+}
+
+.sample {
+    height: 50px;
+    width: 50px;
+    display: inline-block;
+    margin: 5px;
+}
+
+.main {
+    height: 400px;
+    display: inline-block;
+    margin: 5px;
+}
+
+.c1 {
+    background-color: rgb(220, 180, 170);
+}
+
+.c2 {
+    background-color: rgb(125, 119, 131);;
+}
+
+.c3 {
+    background-color: rgb(135, 168, 161);;
+}
+
+.c4 {
+    background-color: rgb(150, 182, 207);;
+}
+
+.c5 {
+    background-color: rgb(220, 180, 170);;
+}
