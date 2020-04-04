@@ -178,7 +178,9 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         # f.write(b"<input name=\"file\" type=\"file\"/>")
         f.write(b"<h1>LN2 - What's cooler than Liquid Nitrogen</h1><hr>")
         
-        f.write(b"<div>\n")
+        f.write(b"<div class='inline'>\n")
+        f.write(b"<h3> Sample Images </h3>")
+
         for name in list:
             fullname = os.path.join(path, name)
             displayname = linkname = name
@@ -192,21 +194,24 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             f.write(('<span><img class="sample" src="/images/%s"/></span>'
                     % (urllib.parse.quote(linkname))).encode())
         f.write(b"</div>")
-        f.write(b"<div>")
+        f.write(b"<div class='inline'>")
+        f.write(b"<h3> Choose colors </h3>")
         f.write(b"<span class='sample c1'></span>")
         f.write(b"<span class='sample c2'></span>")
         f.write(b"<span class='sample c3'></span>")
         f.write(b"<span class='sample c4'></span>")
         f.write(b"<span class='sample c5'></span>")
         f.write(b"</div>")
-        f.write(b"<div>")
+        f.write(b"<div class='inline'>")
+        f.write(b"<h3> Choose patterns </h3>")
         f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
         f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
         f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
         f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
         f.write(b"<span><img class='sample' src='/patterns/pattern.jpg'/></span>")
         f.write(b"</div>")
-        f.write(b"<input type=\"submit\" value=\"upload\"/></form>\n")
+        # f.write(b"<input type=\"submit\" value=\"Modify\" class='inline'/></form>\n")
+        f.write(b"<div><img class='main' src='/images/img2.jpg'/><img class='main' src='/edited/img2.jpg'/></div>")
         f.write(b"</body>\n</html>\n")
         length = f.tell()
         f.seek(0)

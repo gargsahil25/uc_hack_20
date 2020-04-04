@@ -1,6 +1,17 @@
+.inline {
+    display: inline-block;
+    margin: 20px;
+}
+
 .sample {
     height: 50px;
     width: 50px;
+    display: inline-block;
+    margin: 5px;
+}
+
+.main {
+    height: 400px;
     display: inline-block;
     margin: 5px;
 }
