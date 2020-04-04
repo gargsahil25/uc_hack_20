@@ -51,7 +51,7 @@ def resizeAndPad(img, size, pad_color=0):
 
 
 def getOutlineImg(img):
-    return cv2.Canny(img,100,200)  # todo: can be optimised later
+    return cv2.Canny(img,50,200)  # todo: can be optimised later
 
 
 def getColoredImage(img, new_color, pattern_image):
@@ -132,6 +132,6 @@ def changeColor(image_name, position, new_color, pattern_image):
     
 
 
-# changeColor('img33.jpg', (300, 100), [200, 199, 140], None)
-# changeColor('img33.jpg', (300, 100), None, 'pattern2.jpg')
+# changeColor('img3.jpg', (300, 100), [200, 199, 140], None)
+# changeColor('img3.jpg', (300, 100), None, 'pattern2.jpg')
 
