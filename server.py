@@ -110,8 +110,6 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         displaypath = cgi.escape(urllib.parse.unquote(self.path))
         f.write(b'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
         f.write(("<html>\n<title>LN2</title><link rel='stylesheet' href='/css/index.css'/><script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script><script type='text/javascript' src='/js/index.js'></script>\n<body>\n").encode())
-        f.write(b"<form ENCTYPE=\"multipart/form-data\" method=\"post\">")
-        # f.write(b"<input name=\"file\" type=\"file\"/>")
         f.write(b"<h1>LN2 - What's cooler than Liquid Nitrogen</h1><hr>")
         
         f.write(b"<div class='inline'>\n")
@@ -140,11 +138,11 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         f.write(b"</div>")
         f.write(b"<div class='inline'>")
         f.write(b"<h3> Choose patterns </h3>")
-        f.write(b"<span><img class='sample' src='/patterns/pattern.jpg' data-name='pattern.jpg' data-key='pattern'/></span>")
+        f.write(b"<span><img class='sample' src='/patterns/pattern1.jpg' data-name='pattern1.jpg' data-key='pattern'/></span>")
         f.write(b"<span><img class='sample' src='/patterns/pattern2.jpg' data-name='pattern2.jpg' data-key='pattern'/></span>")
         f.write(b"<span><img class='sample' src='/patterns/pattern3.jpg' data-name='pattern3.jpg' data-key='pattern'/></span>")
+        f.write(b"<span><img class='sample' src='/patterns/pattern4.jpg' data-name='pattern4.jpg' data-key='pattern'/></span>")
         f.write(b"</div>")
-        # f.write(b"<input type=\"submit\" value=\"Modify\" class='inline'/></form>\n")
         f.write(("<div><img class='main' src='/images/%s'/><img class='main' src='/edited/%s'/></div>" % (img, img)).encode())
         f.write(b"</body>\n</html>\n")
         length = f.tell()
@@ -230,7 +228,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
  
 def test(HandlerClass = SimpleHTTPRequestHandler,
          ServerClass = http.server.HTTPServer):
-    http.server.test(HandlerClass, ServerClass)
+    http.server.test(HandlerClass, ServerClass, "HTTP/1.0", 80)
  
 if __name__ == '__main__':
     test()
