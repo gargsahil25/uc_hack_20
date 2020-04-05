@@ -2,6 +2,6 @@
 
 python3 server.py
 
-![Image Transformation](./alog.png)
+![Image Transformation](https://raw.githubusercontent.com/gargsahil25/uc_hack_20/master/algo.png)
 
 
