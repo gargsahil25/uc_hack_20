@@ -60,13 +60,12 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 for elem in param_map:
                     item = elem.split('=')
                     dict[item[0]] = item[1]
-                img = dict['img']
-                if 'color' in dict and 'pattern'in dict:
-                    img_proc.changeColor(dict['img'], (300,100), dict['color'].split(','), dict['pattern'])
-                elif 'color' in dict:
-                    img_proc.changeColor(dict['img'], (300,100), dict['color'].split(','), None)
+                if dict.get('img') != None:
+                    img = dict['img']
+                if 'color' in dict:
+                    img_proc.changeColor(img, (300,100), dict['color'].split(','), None)
                 elif 'pattern'in dict:
-                    img_proc.changeColor(dict['img'], (300,100), None, dict['pattern'])
+                    img_proc.changeColor(img, (300,100), None, dict['pattern'])
             self.path = './public/images/' + self.path
             path = self.translate_path(self.path)
             return self.list_directory(path, img)
@@ -228,7 +227,7 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
  
 def test(HandlerClass = SimpleHTTPRequestHandler,
          ServerClass = http.server.HTTPServer):
-    http.server.test(HandlerClass, ServerClass, "HTTP/1.0", 80)
+    http.server.test(HandlerClass, ServerClass)
  
 if __name__ == '__main__':
     test()
